@@ -57,7 +57,7 @@ width: 38px;
 padding: 4px 8px;
 }
 .estudante{
-background-image: background-color(#faae43);
+background-image: background-color(#CBFFA9);
 padding: 24px 0;
 }
 
@@ -70,7 +70,7 @@ display: flex;
 justify-content: space-around;
 }
 .escola{
-background-image: linear-gradient(#C4F7CA,#FF9D9D);
+background-image: linear-gradient(#CBFFA9,#FF9D9D);
 color: #FF9D9D;
 display: flex;
 justify-content:center;
