@@ -32,305 +32,106 @@ Escola">
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contato - Mundo das Flores</title>
-    <style>
-        /* Reset e Estilos Gerais */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden; /* Evita barra de rolagem por causa das pétalas */
-            position: relative;
-        }
-
-        /* Container das Pétalas (Fundo Animado) */
-        #petals-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Permite clicar no formulário através das pétalas */
-            z-index: 1;
-        }
-
-        /* Estilo individual de cada pétala */
-        .petal {
-            position: absolute;
-            top: -50px;
-            background: linear-gradient(to bottom right, #ff7eb3, #ff758c);
-            border-radius: 150% 0 150% 0;
-            opacity: 0.8;
-            animation: fall linear infinite;
-        }
-
-        /* Animação Vertical de Queda com leve balanço */
-        @keyframes fall {
-            0% {
-                transform: translateY(-10vh) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.8;
-            }
-            50% {
-                transform: translateY(50vh) translateX(25px) rotate(180deg);
-            }
-            90% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(110vh) translateX(-25px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* Cartão do Formulário de Contato */
-        .contact-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(214, 51, 108, 0.15);
-            width: 90%;
-            max-width: 480px;
-            z-index: 2; /* Fica acima das pétalas */
-            border: 1px solid rgba(255, 182, 193, 0.4);
-            animation: slideUp 0.8s ease-out;
-        }
-
-        /* Animação de entrada vertical do formulário */
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            color: #d6336c;
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        /* Campos do Formulário */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #2b8a3e; /* Verde folha */
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #f1f3f5;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            outline: none;
-            background-color: #fff;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #ff7eb3;
-            box-shadow: 0 0 8px rgba(255, 126, 179, 0.2);
-        }
-
-        .form-group textarea {
-            resize: none;
-            height: 100px;
-        }
-
-        /* Botão de Envio */
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(to right, #d6336c, #ff758c);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(214, 51, 108, 0.3);
-        }
-
-        .btn-submit:active {
-            transform: translateY(0);
-        }
-
-        /* Mensagem de Sucesso */
-        .success-message {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            background-color: #ebfbee;
-            border: 1px solid #8ce99a;
-            color: #2b8a3e;
-            border-radius: 10px;
-            margin-top: 15px;
-            animation: slideUp 0.5s ease;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Trabalho Escolar - Flores</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #e8f5e9;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      border: 2px solid #2e7d32;
+      background: linear-gradient(to bottom, #87CEEB 80%, #4CAF50 20%);
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    #info {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #1b5e20;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Container onde o JavaScript vai gerar as pétalas -->
-    <div id="petals-container"></div>
+  <canvas id="jardim" width="800" height="300"></canvas>
+  <div id="info">Clique em uma flor para ver o nome!</div>
 
-    <!-- Card Principal de Contato -->
-    <div class="contact-card">
-        <div class="header">
-            <h1>🌸 Fale Conosco</h1>
-            <p>Tem dúvidas sobre botânica, cultivo ou espécies? Envie uma mensagem!</p>
-        </div>
+  <script>
+    const canvas = document.getElementById('jardim');
+    const ctx = canvas.getContext('2d');
+    const info = document.getElementById('info');
 
-        <form id="contactForm">
-            <div class="form-group">
-                <label for="nome">Seu Nome:</label>
-                <input type="text" id="nome" placeholder="Ex: Ana Clara" required>
-            </div>
+    // Lista das flores na horizontal (posição X, cor, nome e dica curta)
+    const flores = [
+      { x: 160, cor: '#FFD700', nome: 'Girassol', texto: 'Gira acompanhando a luz do sol.' },
+      { x: 320, cor: '#FF4500', nome: 'Tulipa', texto: 'Flor típica de climas frios e primavera.' },
+      { x: 480, cor: '#FF69B4', nome: 'Rosa', texto: 'Conhecida pelo perfume e espinhos no caule.' },
+      { x: 640, cor: '#FFFFFF', nome: 'Margarida', texto: 'Possui pétalas brancas e miolo amarelo.' }
+    ];
 
-            <div class="form-group">
-                <label for="email">Seu E-mail:</label>
-                <input type="email" id="email" placeholder="Ex: ana@escola.com" required>
-            </div>
+    let angulo = 0;
 
-            <div class="form-group">
-                <label for="florFavorita">Assunto / Flor de Interesse:</label>
-                <select id="florFavorita">
-                    <option value="Dúvida Geral">Dúvida Geral sobre Botânica</option>
-                    <option value="Rosas">Cultivo de Rosas</option>
-                    <option value="Orquídeas">Cuidados com Orquídeas</option>
-                    <option value="Girassóis">Curiosidades sobre Girassóis</option>
-                    <option value="Sugestão">Sugestão para o Trabalho Escolar</option>
-                </select>
-            </div>
+    function desenhar() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const vento = Math.sin(angulo) * 10; // Movimento suave de ida e volta
 
-            <div class="form-group">
-                <label for="mensagem">Sua Mensagem:</label>
-                <textarea id="mensagem" placeholder="Escreva sua dúvida ou comentário aqui..." required></textarea>
-            </div>
+      flores.forEach(flor => {
+        const baseY = 240; // Chão
+        const topoY = 140; // Altura da flor
+        const topoX = flor.x + vento;
 
-            <button type="submit" class="btn-submit">Enviar Mensagem 🌺</button>
-        </form>
+        // Desenha o caule
+        ctx.beginPath();
+        ctx.moveTo(flor.x, baseY);
+        ctx.lineTo(topoX, topoY);
+        ctx.strokeStyle = '#2E7D32';
+        ctx.lineWidth = 5;
+        ctx.stroke();
 
-        <!-- Mensagem exibida após o envio -->
-        <div id="successMessage" class="success-message">
-            <h3>🌷 Mensagem Enviada!</h3>
-            <p id="feedbackText"></p>
-        </div>
-    </div>
-
-    <script>
-        // 1. ANIMAÇÃO VERTICAL DE PÉTALAS COM JAVASCRIPT
-        const petalsContainer = document.getElementById('petals-container');
-        
-        // Cores variadas para as pétalas (tons de rosa, pêssego e lilás)
-        const petalColors = [
-            'linear-gradient(to bottom right, #ff7eb3, #ff758c)',
-            'linear-gradient(to bottom right, #ffc3a0, #ffafbd)',
-            'linear-gradient(to bottom right, #e0c3fc, #8ec5fc)',
-            'linear-gradient(to bottom right, #f093fb, #f5576c)'
-        ];
-
-        function createPetal() {
-            const petal = document.createElement('div');
-            petal.classList.add('petal');
-
-            // Tamanho aleatório entre 12px e 25px
-            const size = Math.random() * 13 + 12;
-            petal.style.width = `${size}px`;
-            petal.style.height = `${size}px`;
-
-            // Posição horizontal aleatória (0% a 100% da tela)
-            petal.style.left = `${Math.random() * 100}vw`;
-
-            // Duração da queda vertical aleatória (entre 5s e 11s)
-            const duration = Math.random() * 6 + 5;
-            petal.style.animationDuration = `${duration}s`;
-
-            // Cor aleatória da lista
-            const randomColor = petalColors[Math.floor(Math.random() * petalColors.length)];
-            petal.style.background = randomColor;
-
-            petalsContainer.appendChild(petal);
-
-            // Remove a pétala do código depois que ela termina de cair (evita travar o navegador)
-            setTimeout(() => {
-                petal.remove();
-            }, duration * 1000);
+        // Desenha as pétalas
+        for (let i = 0; i < 6; i++) {
+          const rad = (i * Math.PI) / 3;
+          ctx.beginPath();
+          ctx.arc(topoX + Math.cos(rad) * 15, topoY + Math.sin(rad) * 15, 12, 0, Math.PI * 2);
+          ctx.fillStyle = flor.cor;
+          ctx.fill();
         }
 
-        // Cria uma nova pétala a cada 350 milissegundos
-        setInterval(createPetal, 350);
+        // Desenha o miolo
+        ctx.beginPath();
+        ctx.arc(topoX, topoY, 10, 0, Math.PI * 2);
+        ctx.fillStyle = '#8B4513';
+        ctx.fill();
+      });
 
+      angulo += 0.04;
+      requestAnimationFrame(desenhar);
+    }
 
-        // 2. INTERATIVIDADE DO FORMULÁRIO DE CONTATO
-        const contactForm = document.getElementById('contactForm');
-        const successMessage = document.getElementById('successMessage');
-        const feedbackText = document.getElementById('feedbackText');
+    // Interação de clique para mostrar poucas informações
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const cliqueX = e.clientX - rect.left;
 
-        contactForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Evita que a página recarregue
+      flores.forEach(flor => {
+        if (Math.abs(cliqueX - flor.x) < 40) {
+          info.innerText = `${flor.nome}: ${flor.texto}`;
+        }
+      });
+    });
 
-            // Pega os valores digitados pelo usuário
-            const nome = document.getElementById('nome').value;
-            const assunto = document.getElementById('florFavorita').value;
+    desenhar();
+  </script>
 
-            // Esconde o formulário e mostra a mensagem personalizada
-            contactForm.style.display = 'none';
-            feedbackText.innerText = `Obrigado, ${nome}! Recebemos sua mensagem sobre "${assunto}" e responderemos em breve.`;
-            successMessage.style.display = 'block';
-
-            // Faz cair uma "chuva extra" de pétalas para comemorar o envio!
-            for (let i = 0; i < 25; i++) {
-                setTimeout(createPetal, i * 80);
-            }
-        });
-    </script>
 </body>
 </html>
+
 
 
 
