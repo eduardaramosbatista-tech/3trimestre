@@ -29,173 +29,120 @@ Escola">
 
 
 <!--conteúdo-->
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Contato - Jardim Animado</title>
+  <title>Jardim - Trabalho Front-End</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-    body { overflow: hidden; background: linear-gradient(to bottom, #e8f5e9, #c8e6c9); }
-
-    /* Menu fixo no canto esquerdo */
-    .menu-esquerdo {
-      position: fixed;
-      top: 0; left: 0;
-      width: 260px; height: 100vh;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(5px);
-      padding: 30px 20px;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .menu-esquerdo h2 { color: #2e7d32; font-size: 22px; }
-    .menu-esquerdo p { color: #555; font-size: 14px; }
-    .menu-esquerdo input, .menu-esquerdo textarea {
-      width: 100%; padding: 10px;
-      border: 1px solid #a5d6a7; border-radius: 6px;
-    }
-    .menu-esquerdo button {
-      padding: 10px; background: #43a047; color: white;
-      border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
-    }
-    .menu-esquerdo button:hover { background: #2e7d32; }
-
-    /* Área da animação horizontal */
+    * { margin: 0; padding: 0; }
+    body { overflow: hidden; }
     canvas { display: block; }
   </style>
 </head>
 <body>
-
-  <!-- Menu no canto esquerdo -->
-  <aside class="menu-esquerdo">
-    <h2>Fale Conosco</h2>
-    <p>Deixe sua mensagem enquanto observa nosso jardim florescer.</p>
-    <input type="text" placeholder="Seu nome">
-    <input type="email" placeholder="Seu e-mail">
-    <textarea rows="4" placeholder="Sua mensagem..."></textarea>
-    <button onclick="alert('Mensagem enviada!')">Enviar Contato</button>
-  </aside>
-
-  <!-- Tela da animação -->
-  <canvas id="jardim"></canvas>
+  <canvas id="tela"></canvas>
 
   <script>
+    const canvas = document.getElementById('tela');
+    const ctx = canvas.getContext('2d');
 
-const ctx = canvas.getContext('2d');
-
-    // Ajusta o tamanho da tela horizontal
-    function ajustarTela() {
+    // Deixa a animação ocupando toda a tela na horizontal
+    function ajustar() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-    window.addEventListener('resize', ajustarTela);
-    ajustarTela();
+    window.addEventListener('resize', ajustar);
+    ajustar();
 
-    const cores = ['#ff6b6b', '#feca57', '#ff9ff3', '#54a0ff', '#ff793f'];
-    const flores = [];
+    let tempo = 0;
+    const cores = ['#ff7675', '#fdcb6e', '#ff9ff3', '#74b9ff'];
+    const arvores = [];
 
-    class Flor {
-      constructor() {
-        this.reiniciar();
-      }
+    // Cria 15 sementes espalhadas na horizontal
+    for (let i = 0; i < 15; i++) {
+      arvores.push({
+        x: 60 + Math.random() * (canvas.width - 120),
+        y: -Math.random() * 400,
+        vel: 1.5 + Math.random(),
+        noChao: false,
+        tronco: 0,
+        maxTronco: 60 + Math.random() * 60,
+        copa: 0,
+        cor: cores[i % cores.length],
+        vida: 0
+      });
+    }
 
-      reiniciar() {
-        // Nasce apenas à direita do menu (260px) espalhada na horizontal
-        this.x = 280 + Math.random() * (canvas.width - 300);
-        this.y = -20;
-        this.velocidadeQueda = 1.5 + Math.random() * 2;
-        this.noChao = false;
-        this.alturaCaule = 0;
-        this.alturaMaxima = 40 + Math.random() * 70;
-        this.tamanhoPetala = 0;
-        this.cor = cores[Math.floor(Math.random() * cores.length)];
-        this.tempoVida = 0;
-      }
+    function animar() {
+      tempo += 0.008;
+      // Alterna automaticamente entre dia (1) e noite (0)
+      const luz = (Math.sin(tempo) + 1) / 2;
 
-      atualizar() {
-        const chao = canvas.height - 20; // Linha do solo
+      // Céu mudando de azul claro (dia) para azul escuro (noite)
+      ctx.fillStyle = `rgb(${20 + luz * 115}, ${30 + luz * 176}, ${60 + luz * 190})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (!this.noChao) {
-          // 1. Caindo do céu
-          this.y += this.velocidadeQueda;
-          this.x += Math.sin(this.y * 0.03) * 0.8; // Leve balanço ao cair
-          if (this.y >= chao) {
-            this.y = chao;
-            this.noChao = true;
-          }
-        } else {
-          // 2. Crescendo no chão
-          if (this.alturaCaule < this.alturaMaxima) {
-            this.alturaCaule += 0.6;
-          } else if (this.tamanhoPetala < 12) {
-            this.tamanhoPetala += 0.2;
-          } else {
-            // 3. Fica florida por um tempo e recomeça o ciclo
-            this.tempoVida++;
-            if (this.tempoVida > 200) this.reiniciar();
-          }
-        }
-      }
+      // Sol se movendo no céu durante o dia
+      const solY = canvas.height - (luz * (canvas.height - 100));
+      ctx.fillStyle = '#ffeaa7';
+      ctx.beginPath();
+      ctx.arc(canvas.width * 0.8, solY, 40, 0, Math.PI * 2);
+      ctx.fill();
 
-      desenhar() {
-        if (!this.noChao) {
-          // Desenha a semente/pétala caindo
-          ctx.fillStyle = this.cor;
+      // Chão verde do jardim
+      const chao = canvas.height - 40;
+      ctx.fillStyle = luz > 0.3 ? '#2ecc71' : '#1e8449';
+      ctx.fillRect(0, chao, canvas.width, 40);
+
+      // Atualiza e desenha cada flor virando árvore
+      arvores.forEach(a => {
+        if (!a.noChao) {
+          // 1. Flor caindo
+          a.y += a.vel;
+          ctx.fillStyle = a.cor;
           ctx.beginPath();
-          ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
+          ctx.arc(a.x, a.y, 6, 0, Math.PI * 2);
           ctx.fill();
-        } else {
-          // Desenha o caule verde
-          ctx.strokeStyle = '#388e3c';
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x, this.y - this.alturaCaule);
-          ctx.stroke();
 
-          // Desenha a flor no topo do caule
-          if (this.tamanhoPetala > 0) {
-            const topoY = this.y - this.alturaCaule;
-            ctx.fillStyle = this.cor;
-            for (let i = 0; i < 5; i++) {
-              const angulo = (i * Math.PI * 2) / 5;
-              const px = this.x + Math.cos(angulo) * this.tamanhoPetala;
-              const py = topoY + Math.sin(angulo) * this.tamanhoPetala;
-              ctx.beginPath();
-              ctx.arc(px, py, this.tamanhoPetala * 0.6, 0, Math.PI * 2);
-              ctx.fill();
-            }
-            // Miolo amarelo
-            ctx.fillStyle = '#fff200';
+          if (a.y >= chao) a.noChao = true;
+        } else {
+          // 2. Cresce o tronco e depois a copa florida
+          if (a.tronco < a.maxTronco) a.tronco += 0.5;
+          else if (a.copa < 35) a.copa += 0.3;
+          else a.vida++;
+
+          // Desenha o tronco
+          ctx.fillStyle = '#6d4c41';
+          ctx.fillRect(a.x - 4, chao - a.tronco, 8, a.tronco);
+
+          // Desenha a copa da árvore com flores
+          if (a.copa > 0) {
+            ctx.fillStyle = '#27ae60';
             ctx.beginPath();
-            ctx.arc(this.x, topoY, this.tamanhoPetala * 0.4, 0, Math.PI * 2);
+            ctx.arc(a.x, chao - a.tronco, a.copa, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = a.cor;
+            ctx.beginPath();
+            ctx.arc(a.x - 10, chao - a.tronco - 5, a.copa * 0.3, 0, Math.PI * 2);
+            ctx.arc(a.x + 12, chao - a.tronco + 5, a.copa * 0.3, 0, Math.PI * 2);
             ctx.fill();
           }
+
+          // Reinicia o ciclo sozinho após um tempo
+          if (a.vida > 250) {
+            a.y = -20;
+            a.noChao = false;
+            a.tronco = 0;
+            a.copa = 0;
+            a.vida = 0;
+          }
         }
-      }
-    }
-
-    // Cria 25 flores com atraso inicial para não caírem todas juntas
-    for (let i = 0; i < 25; i++) {
-      setTimeout(() => flores.push(new Flor()), i * 300);
-    }
-
-    // Loop contínuo da animação
-    function animar() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Desenha a grama/chão na parte inferior
-      ctx.fillStyle = '#66bb6a';
-      ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
-
-      flores.forEach(flor => {
-        flor.atualizar();
-        flor.desenhar();
       });
 
       requestAnimationFrame(animar);
@@ -205,9 +152,6 @@ const ctx = canvas.getContext('2d');
   </script>
 </body>
 </html>
-
-
-
 
 
 
