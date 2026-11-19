@@ -26,6 +26,124 @@ Escola">
   <li><a href="jogos.html">Jogos</a></li>
 </ul>
 <!--conteúdo-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sobre - Flores</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff0f5; /* Fundo rosa bem clarinho */
+      overflow: hidden;
+    }
+
+    /* SEU MENU INTACTO NO CANTO ESQUERDO */
+    .menu-esquerdo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100vh;
+      background: #ffffff;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+
+    /* ÁREA CENTRAL ONDE O TEXTO SOBRE AS FLORES APARECE SOZINHO */
+    .conteudo {
+      margin-left: 220px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      z-index: 5;
+    }
+
+    h1 { color: #c2185b; }
+
+    #texto-animado {
+      font-size: 24px;
+      color: #444;
+      max-width: 500px;
+      margin-top: 20px;
+      transition: opacity 0.8s; /* Efeito suave de aparecer e sumir */
+    }
+
+    /* ESTILO DAS PÉTALAS CAINDO */
+    .petala {
+      position: fixed;
+      top: -30px;
+      font-size: 24px;
+      z-index: 1;
+      animation: cair 5s linear forwards;
+    }
+
+    @keyframes cair {
+      to { transform: translateY(105vh) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SEU MENU NO CANTO ESQUERDO -->
+  <nav class="menu-esquerdo">
+    <h3>Menu</h3>
+    <p><a href="index.html">Início</a></p>
+    <p><a href="sobre.html">Sobre</a></p>
+    <p><a href="contato.html">Contato</a></p>
+  </nav>
+
+  <!-- TEXTO SOBRE AS FLORES -->
+  <div class="conteudo">
+    <h1>🌸 Sobre as Flores 🌸</h1>
+    <p id="texto-animado">As flores trazem cor, vida e alegria para a natureza.</p>
+  </div>
+
+  <script>
+    // 1. LISTA DE FRASES SOBRE FLORES
+    const frases = [
+      "As flores trazem cor, vida e alegria para a natureza.",
+      "Cada flor tem um perfume e um significado especial.",
+      "Elas atraem abelhas e borboletas, ajudando o meio ambiente.",
+      "Cuidar de um jardim é cultivar paciência e beleza."
+    ];
+
+    let indice = 0;
+    const elementoTexto = document.getElementById("texto-animado");
+
+    // 2. TROCA AS FRASES AUTOMATICAMENTE A CADA 4 SEGUNDOS
+    setInterval(() => {
+      elementoTexto.style.opacity = 0; // Faz o texto sumir suavemente
+
+      setTimeout(() => {
+        indice = (indice + 1) % frases.length;
+        elementoTexto.innerText = frases[indice];
+        elementoTexto.style.opacity = 1; // Faz o novo texto aparecer
+      }, 800);
+    }, 4000);
+
+    // 3. FAZ FLORES CAÍREM SOZINHAS NO FUNDO
+    setInterval(() => {
+      const flor = document.createElement("div");
+      flor.classList.add("petala");
+      flor.innerText = "🌸";
+      flor.style.left = (210 + Math.random() * (window.innerWidth - 250)) + "px";
+      document.body.appendChild(flor);
+
+      // Apaga a flor depois que ela chega no chão
+      setTimeout(() => flor.remove(), 5000);
+    }, 700);
+  </script>
+
+</body>
+</html>
 
 
 
