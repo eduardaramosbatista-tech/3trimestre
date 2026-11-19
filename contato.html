@@ -33,150 +33,179 @@ Escola">
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Menu Contato com Flores</title>
+  <title>Contato - Jardim Animado</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-    body { background: #f4f1ea; height: 100vh; overflow: hidden; }
+    body { overflow: hidden; background: linear-gradient(to bottom, #e8f5e9, #c8e6c9); }
 
-    /* Botão do Menu Superior */
-    nav { background: #5c4033; padding: 15px 30px; display: flex; justify-content: flex-end; }
-    .btn-menu {
-      background: #e57373; color: white; border: none; padding: 10px 20px;
-      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px;
-    }
-
-    /* Tela de Contato (escondida inicialmente) */
-    #tela-contato {
-      display: none; position: fixed; inset: 0;
-      background: linear-gradient(to bottom, #fff9f9, #fce4ec);
-      justify-content: center; align-items: center;
-    }
-
-    canvas { position: absolute; inset: 0; pointer-events: none; }
-
-    .cartao {
-      position: relative; z-index: 2; background: rgba(255, 255, 255, 0.9);
-      padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      width: 320px; text-align: center;
+    /* Menu fixo no canto esquerdo */
+    .menu-esquerdo {
+      position: fixed;
+      top: 0; left: 0;
+      width: 260px; height: 100vh;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(5px);
+      padding: 30px 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
 
-    h2 { color: #5c4033; margin-bottom: 15px; }
-    input, textarea {
-      width: 100%; padding: 10px; margin-bottom: 10px;
-      border: 1px solid #e0c3c3; border-radius: 6px;
+    .menu-esquerdo h2 { color: #2e7d32; font-size: 22px; }
+    .menu-esquerdo p { color: #555; font-size: 14px; }
+    .menu-esquerdo input, .menu-esquerdo textarea {
+      width: 100%; padding: 10px;
+      border: 1px solid #a5d6a7; border-radius: 6px;
     }
-    button[type="submit"] {
-      width: 100%; padding: 10px; background: #e57373; color: white;
-      border: none; border-radius: 6px; font-weight: bold; cursor: pointer;
+    .menu-esquerdo button {
+      padding: 10px; background: #43a047; color: white;
+      border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
     }
-    .fechar {
-      position: absolute; top: 10px; right: 15px; cursor: pointer;
-      font-weight: bold; color: #888; font-size: 18px;
-    }
+    .menu-esquerdo button:hover { background: #2e7d32; }
+
+    /* Área da animação horizontal */
+    canvas { display: block; }
   </style>
 </head>
 <body>
 
-  <nav>
-    <button class="btn-menu" onclick="abrirContato()">Contato</button>
-  </nav>
+  <!-- Menu no canto esquerdo -->
+  <aside class="menu-esquerdo">
+    <h2>Fale Conosco</h2>
+    <p>Deixe sua mensagem enquanto observa nosso jardim florescer.</p>
+    <input type="text" placeholder="Seu nome">
+    <input type="email" placeholder="Seu e-mail">
+    <textarea rows="4" placeholder="Sua mensagem..."></textarea>
+    <button onclick="alert('Mensagem enviada!')">Enviar Contato</button>
+  </aside>
 
-  <div id="tela-contato">
-    <canvas id="jardim"></canvas>
-
-    <div class="cartao">
-      <span class="fechar" onclick="fecharContato()">✕</span>
-      <h2>Fale Conosco</h2>
-      <form onsubmit="event.preventDefault(); alert('Enviado! 🌸'); fecharContato();">
-        <input type="text" placeholder="Seu nome" required>
-        <input type="email" placeholder="Seu e-mail" required>
-        <textarea rows="3" placeholder="Sua mensagem..." required></textarea>
-        <button type="submit">Enviar</button>
-      </form>
-    </div>
-  </div>
+  <!-- Tela da animação -->
+  <canvas id="jardim"></canvas>
 
   <script>
-    const tela = document.getElementById('tela-contato');
-    const canvas = document.getElementById('jardim');
-    const ctx = canvas.getContext('2d');
-    let flores = [];
-    let animacaoId;
-    const cores = ['#ff8a80', '#ff80ab', '#ea80fc', '#ffd180', '#f48fb1'];
+
+const ctx = canvas.getContext('2d');
+
+    // Ajusta o tamanho da tela horizontal
+    function ajustarTela() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', ajustarTela);
+    ajustarTela();
+
+    const cores = ['#ff6b6b', '#feca57', '#ff9ff3', '#54a0ff', '#ff793f'];
+    const flores = [];
 
     class Flor {
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = -20; // Começa acima do topo da tela
-        this.velocidade = Math.random() * 1.5 + 1;
-        this.tamanho = 6; // Começa pequena enquanto cai
-        this.tamanhoMax = Math.random() * 12 + 14; // Tamanho final no chão
-        this.chao = canvas.height - (Math.random() * 35 + 15); // Altura onde pousa
+        this.reiniciar();
+      }
+
+      reiniciar() {
+        // Nasce apenas à direita do menu (260px) espalhada na horizontal
+        this.x = 280 + Math.random() * (canvas.width - 300);
+        this.y = -20;
+        this.velocidadeQueda = 1.5 + Math.random() * 2;
+        this.noChao = false;
+        this.alturaCaule = 0;
+        this.alturaMaxima = 40 + Math.random() * 70;
+        this.tamanhoPetala = 0;
         this.cor = cores[Math.floor(Math.random() * cores.length)];
-        this.angulo = Math.random() * 6;
+        this.tempoVida = 0;
       }
 
       atualizar() {
-        if (this.y < this.chao) {
-          this.y += this.velocidade; // Cai suavemente
-          this.angulo += 0.03;       // Gira enquanto cai
-        } else if (this.tamanho < this.tamanhoMax) {
-          this.tamanho += 0.3;       // Cresce sozinha ao tocar o chão
+        const chao = canvas.height - 20; // Linha do solo
+
+        if (!this.noChao) {
+          // 1. Caindo do céu
+          this.y += this.velocidadeQueda;
+          this.x += Math.sin(this.y * 0.03) * 0.8; // Leve balanço ao cair
+          if (this.y >= chao) {
+            this.y = chao;
+            this.noChao = true;
+          }
+        } else {
+          // 2. Crescendo no chão
+          if (this.alturaCaule < this.alturaMaxima) {
+            this.alturaCaule += 0.6;
+          } else if (this.tamanhoPetala < 12) {
+            this.tamanhoPetala += 0.2;
+          } else {
+            // 3. Fica florida por um tempo e recomeça o ciclo
+            this.tempoVida++;
+            if (this.tempoVida > 200) this.reiniciar();
+          }
         }
       }
 
       desenhar() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angulo);
-        ctx.fillStyle = this.cor;
-
-        for (let i = 0; i < 5; i++) {
-          ctx.rotate((Math.PI * 2) / 5);
+        if (!this.noChao) {
+          // Desenha a semente/pétala caindo
+          ctx.fillStyle = this.cor;
           ctx.beginPath();
-          ctx.ellipse(0, this.tamanho / 1.5, this.tamanho / 3, this.tamanho / 1.5, 0, 0, Math.PI * 2);
+          ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
           ctx.fill();
-        }
+        } else {
+          // Desenha o caule verde
+          ctx.strokeStyle = '#388e3c';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(this.x, this.y - this.alturaCaule);
+          ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(0, 0, this.tamanho / 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#fff59d';
-        ctx.fill();
-        ctx.restore();
+          // Desenha a flor no topo do caule
+          if (this.tamanhoPetala > 0) {
+            const topoY = this.y - this.alturaCaule;
+            ctx.fillStyle = this.cor;
+            for (let i = 0; i < 5; i++) {
+              const angulo = (i * Math.PI * 2) / 5;
+              const px = this.x + Math.cos(angulo) * this.tamanhoPetala;
+              const py = topoY + Math.sin(angulo) * this.tamanhoPetala;
+              ctx.beginPath();
+              ctx.arc(px, py, this.tamanhoPetala * 0.6, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            // Miolo amarelo
+            ctx.fillStyle = '#fff200';
+            ctx.beginPath();
+            ctx.arc(this.x, topoY, this.tamanhoPetala * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
       }
     }
 
-    function loop() {
+    // Cria 25 flores com atraso inicial para não caírem todas juntas
+    for (let i = 0; i < 25; i++) {
+      setTimeout(() => flores.push(new Flor()), i * 300);
+    }
+
+    // Loop contínuo da animação
+    function animar() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Solta uma nova flor automaticamente de tempos em tempos (limite de 45 flores)
-      if (flores.length < 45 && Math.random() < 0.04) {
-        flores.push(new Flor());
-      }
+      // Desenha a grama/chão na parte inferior
+      ctx.fillStyle = '#66bb6a';
+      ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
 
       flores.forEach(flor => {
         flor.atualizar();
         flor.desenhar();
       });
 
-      animacaoId = requestAnimationFrame(loop);
+      requestAnimationFrame(animar);
     }
 
-    function abrirContato() {
-      tela.style.display = 'flex';
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      flores = []; // Limpa o jardim para recomeçar a queda
-      loop();
-    }
-
-    function fecharContato() {
-      tela.style.display = 'none';
-      cancelAnimationFrame(animacaoId); // Para a animação quando o menu fecha
-    }
+    animar();
   </script>
 </body>
 </html>
+
 
 
 
