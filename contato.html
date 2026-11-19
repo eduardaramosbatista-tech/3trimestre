@@ -29,6 +29,154 @@ Escola">
 
 
 <!--conteúdo-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu Contato com Flores</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+    body { background: #f4f1ea; height: 100vh; overflow: hidden; }
+
+    /* Botão do Menu Superior */
+    nav { background: #5c4033; padding: 15px 30px; display: flex; justify-content: flex-end; }
+    .btn-menu {
+      background: #e57373; color: white; border: none; padding: 10px 20px;
+      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px;
+    }
+
+    /* Tela de Contato (escondida inicialmente) */
+    #tela-contato {
+      display: none; position: fixed; inset: 0;
+      background: linear-gradient(to bottom, #fff9f9, #fce4ec);
+      justify-content: center; align-items: center;
+    }
+
+    canvas { position: absolute; inset: 0; pointer-events: none; }
+
+    .cartao {
+      position: relative; z-index: 2; background: rgba(255, 255, 255, 0.9);
+      padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      width: 320px; text-align: center;
+    }
+
+    h2 { color: #5c4033; margin-bottom: 15px; }
+    input, textarea {
+      width: 100%; padding: 10px; margin-bottom: 10px;
+      border: 1px solid #e0c3c3; border-radius: 6px;
+    }
+    button[type="submit"] {
+      width: 100%; padding: 10px; background: #e57373; color: white;
+      border: none; border-radius: 6px; font-weight: bold; cursor: pointer;
+    }
+    .fechar {
+      position: absolute; top: 10px; right: 15px; cursor: pointer;
+      font-weight: bold; color: #888; font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <button class="btn-menu" onclick="abrirContato()">Contato</button>
+  </nav>
+
+  <div id="tela-contato">
+    <canvas id="jardim"></canvas>
+
+    <div class="cartao">
+      <span class="fechar" onclick="fecharContato()">✕</span>
+      <h2>Fale Conosco</h2>
+      <form onsubmit="event.preventDefault(); alert('Enviado! 🌸'); fecharContato();">
+        <input type="text" placeholder="Seu nome" required>
+        <input type="email" placeholder="Seu e-mail" required>
+        <textarea rows="3" placeholder="Sua mensagem..." required></textarea>
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const tela = document.getElementById('tela-contato');
+    const canvas = document.getElementById('jardim');
+    const ctx = canvas.getContext('2d');
+    let flores = [];
+    let animacaoId;
+    const cores = ['#ff8a80', '#ff80ab', '#ea80fc', '#ffd180', '#f48fb1'];
+
+    class Flor {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = -20; // Começa acima do topo da tela
+        this.velocidade = Math.random() * 1.5 + 1;
+        this.tamanho = 6; // Começa pequena enquanto cai
+        this.tamanhoMax = Math.random() * 12 + 14; // Tamanho final no chão
+        this.chao = canvas.height - (Math.random() * 35 + 15); // Altura onde pousa
+        this.cor = cores[Math.floor(Math.random() * cores.length)];
+        this.angulo = Math.random() * 6;
+      }
+
+      atualizar() {
+        if (this.y < this.chao) {
+          this.y += this.velocidade; // Cai suavemente
+          this.angulo += 0.03;       // Gira enquanto cai
+        } else if (this.tamanho < this.tamanhoMax) {
+          this.tamanho += 0.3;       // Cresce sozinha ao tocar o chão
+        }
+      }
+
+      desenhar() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angulo);
+        ctx.fillStyle = this.cor;
+
+        for (let i = 0; i < 5; i++) {
+          ctx.rotate((Math.PI * 2) / 5);
+          ctx.beginPath();
+          ctx.ellipse(0, this.tamanho / 1.5, this.tamanho / 3, this.tamanho / 1.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(0, 0, this.tamanho / 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff59d';
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Solta uma nova flor automaticamente de tempos em tempos (limite de 45 flores)
+      if (flores.length < 45 && Math.random() < 0.04) {
+        flores.push(new Flor());
+      }
+
+      flores.forEach(flor => {
+        flor.atualizar();
+        flor.desenhar();
+      });
+
+      animacaoId = requestAnimationFrame(loop);
+    }
+
+    function abrirContato() {
+      tela.style.display = 'flex';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      flores = []; // Limpa o jardim para recomeçar a queda
+      loop();
+    }
+
+    function fecharContato() {
+      tela.style.display = 'none';
+      cancelAnimationFrame(animacaoId); // Para a animação quando o menu fecha
+    }
+  </script>
+</body>
+</html>
 
 
 
