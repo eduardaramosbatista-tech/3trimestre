@@ -33,125 +33,106 @@ Escola">
 
 
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Jardim - Trabalho Front-End</title>
+  <title>Jardim Animado - Front-End</title>
   <style>
-    * { margin: 0; padding: 0; }
-    body { overflow: hidden; }
+    body { margin: 0; overflow: hidden; }
     canvas { display: block; }
   </style>
 </head>
 <body>
-  <canvas id="tela"></canvas>
+  <canvas id="c"></canvas>
 
   <script>
-    const canvas = document.getElementById('tela');
-    const ctx = canvas.getContext('2d');
+    const c = document.getElementById('c');
+    const ctx = c.getContext('2d');
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
 
-    // Deixa a animação ocupando toda a tela na horizontal
-    function ajustar() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', ajustar);
-    ajustar();
-
-    let tempo = 0;
+    let t = 0;
     const cores = ['#ff7675', '#fdcb6e', '#ff9ff3', '#74b9ff'];
-    const arvores = [];
+    const itens = Array.from({ length: 14 }, (_, i) => ({
+      x: 70 + (i * (c.width - 140)) / 13, // Espalha na horizontal
+      y: -Math.random() * 350,
+      vel: 1.5 + Math.random(),
+      tronco: 0,
+      maxTronco: 55 + Math.random() * 55,
+      copa: 0,
+      cor: cores[i % cores.length],
+      tempo: 0
+    }));
 
-    // Cria 15 sementes espalhadas na horizontal
-    for (let i = 0; i < 15; i++) {
-      arvores.push({
-        x: 60 + Math.random() * (canvas.width - 120),
-        y: -Math.random() * 400,
-        vel: 1.5 + Math.random(),
-        noChao: false,
-        tronco: 0,
-        maxTronco: 60 + Math.random() * 60,
-        copa: 0,
-        cor: cores[i % cores.length],
-        vida: 0
-      });
-    }
+    function desenhar() {
+      t += 0.008;
+      const dia = (Math.sin(t) + 1) / 2; // Vai de 0 (noite) a 1 (dia)
+      const chao = c.height - 45;
 
-    function animar() {
-      tempo += 0.008;
-      // Alterna automaticamente entre dia (1) e noite (0)
-      const luz = (Math.sin(tempo) + 1) / 2;
+      // Céu mudando de cor (dia e noite)
+      ctx.fillStyle = `rgb(${15 + dia * 120}, ${25 + dia * 180}, ${55 + dia * 195})`;
+      ctx.fillRect(0, 0, c.width, c.height);
 
-      // Céu mudando de azul claro (dia) para azul escuro (noite)
-      ctx.fillStyle = `rgb(${20 + luz * 115}, ${30 + luz * 176}, ${60 + luz * 190})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Sol se movendo no céu durante o dia
-      const solY = canvas.height - (luz * (canvas.height - 100));
-      ctx.fillStyle = '#ffeaa7';
+      // Sol (de dia) e Lua (de noite)
+      ctx.fillStyle = dia > 0.35 ? '#ffeaa7' : '#dfe6e9';
       ctx.beginPath();
-      ctx.arc(canvas.width * 0.8, solY, 40, 0, Math.PI * 2);
+      ctx.arc(c.width * 0.85, c.height - dia * (c.height - 90), 35, 0, Math.PI * 2);
       ctx.fill();
 
-      // Chão verde do jardim
-      const chao = canvas.height - 40;
-      ctx.fillStyle = luz > 0.3 ? '#2ecc71' : '#1e8449';
-      ctx.fillRect(0, chao, canvas.width, 40);
+      // Grama horizontal
+      ctx.fillStyle = dia > 0.35 ? '#2ecc71' : '#145a32';
+      ctx.fillRect(0, chao, c.width, 45);
 
-      // Atualiza e desenha cada flor virando árvore
-      arvores.forEach(a => {
-        if (!a.noChao) {
+      // Flores caindo e virando árvores
+      itens.forEach(p => {
+        if (p.y < chao) {
           // 1. Flor caindo
-          a.y += a.vel;
-          ctx.fillStyle = a.cor;
+          p.y += p.vel;
+          ctx.fillStyle = p.cor;
           ctx.beginPath();
-          ctx.arc(a.x, a.y, 6, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
           ctx.fill();
-
-          if (a.y >= chao) a.noChao = true;
         } else {
-          // 2. Cresce o tronco e depois a copa florida
-          if (a.tronco < a.maxTronco) a.tronco += 0.5;
-          else if (a.copa < 35) a.copa += 0.3;
-          else a.vida++;
+          // 2. Crescendo árvore
+          if (p.tronco < p.maxTronco) p.tronco += 0.5;
+          else if (p.copa < 32) p.copa += 0.3;
+          else p.tempo++;
 
-          // Desenha o tronco
-          ctx.fillStyle = '#6d4c41';
-          ctx.fillRect(a.x - 4, chao - a.tronco, 8, a.tronco);
+          ctx.fillStyle = '#5d4037'; // Tronco
+          ctx.fillRect(p.x - 4, chao - p.tronco, 8, p.tronco);
 
-          // Desenha a copa da árvore com flores
-          if (a.copa > 0) {
-            ctx.fillStyle = '#27ae60';
+          if (p.copa > 0) {
+            ctx.fillStyle = '#27ae60'; // Folhas
             ctx.beginPath();
-            ctx.arc(a.x, chao - a.tronco, a.copa, 0, Math.PI * 2);
+            ctx.arc(p.x, chao - p.tronco, p.copa, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.fillStyle = a.cor;
+            ctx.fillStyle = p.cor; // Flores na árvore
             ctx.beginPath();
-            ctx.arc(a.x - 10, chao - a.tronco - 5, a.copa * 0.3, 0, Math.PI * 2);
-            ctx.arc(a.x + 12, chao - a.tronco + 5, a.copa * 0.3, 0, Math.PI * 2);
+            ctx.arc(p.x - 10, chao - p.tronco - 5, p.copa * 0.28, 0, Math.PI * 2);
+            ctx.arc(p.x + 10, chao - p.tronco + 6, p.copa * 0.28, 0, Math.PI * 2);
             ctx.fill();
           }
 
-          // Reinicia o ciclo sozinho após um tempo
-          if (a.vida > 250) {
-            a.y = -20;
-            a.noChao = false;
-            a.tronco = 0;
-            a.copa = 0;
-            a.vida = 0;
+          // Recomeça o ciclo sozinho
+          if (p.tempo > 220) {
+            p.y = -20; p.tronco = 0; p.copa = 0; p.tempo = 0;
           }
         }
       });
 
-      requestAnimationFrame(animar);
+      requestAnimationFrame(desenhar);
     }
 
-    animar();
+    desenhar();
   </script>
 </body>
 </html>
+
+
+
 
 
 
