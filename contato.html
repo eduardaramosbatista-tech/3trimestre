@@ -29,6 +29,99 @@ Escola">
 
 
 <!--conteúdo-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Animação de Flores</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    /* Faixa horizontal onde a animação acontece */
+    #jardim {
+      position: relative;
+      width: 100%;
+      height: 180px; /* Altura da faixa horizontal */
+      background: linear-gradient(to bottom, #e0f7fa, #e8f5e9);
+      border-bottom: 6px solid #4caf50; /* Chão (grama) */
+      overflow: hidden;
+    }
+
+    /* Estilo base de cada flor */
+    .flor {
+      position: absolute;
+      top: -30px;
+      font-size: 16px;
+      user-select: none;
+      transform-origin: bottom center; /* Faz a flor crescer e balançar a partir da base */
+      transition: transform 0.8s ease-out;
+    }
+
+    /* Animação do vento depois que a flor cresce */
+    @keyframes vento {
+      0%, 100% { transform: scale(1.8) rotate(-10deg); }
+      50% { transform: scale(1.8) rotate(10deg); }
+    }
+
+    .no-chao {
+      animation: vento 2.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Área da animação horizontal -->
+  <div id="jardim"></div>
+
+  <script>
+    const jardim = document.getElementById('jardim');
+    const tiposDeFlor = ['🌸', '🌼', '🌷', '🌻', '🌺'];
+    let totalFlores = 0;
+
+    function criarFlor() {
+      // Limita a 25 flores no chão para não poluir a tela
+      if (totalFlores >= 25) return;
+      totalFlores++;
+
+      const flor = document.createElement('div');
+      flor.classList.add('flor');
+      flor.innerText = tiposDeFlor[Math.floor(Math.random() * tiposDeFlor.length)];
+
+      // Posição horizontal aleatória
+      const posX = Math.random() * (jardim.clientWidth - 30);
+      flor.style.left = posX + 'px';
+      jardim.appendChild(flor);
+
+      let posY = -30;
+      const chao = jardim.clientHeight - 28; // Altura onde ela para
+
+      // Faz a flor cair usando JavaScript
+      const queda = setInterval(() => {
+        posY += 2; // Velocidade da queda
+        flor.style.top = posY + 'px';
+
+        // Quando encosta no chão:
+        if (posY >= chao) {
+          clearInterval(queda); // Para de cair
+          flor.style.transform = 'scale(1.8)'; // Cresce
+          
+          // Depois de crescer, começa a balançar com o vento
+          setTimeout(() => {
+            flor.classList.add('no-chao');
+          }, 800);
+        }
+      }, 20);
+    }
+
+    // Cria uma nova flor a cada 700 milissegundos
+    setInterval(criarFlor, 700);
+  </script>
+
+</body>
+</html>
 
 
 
